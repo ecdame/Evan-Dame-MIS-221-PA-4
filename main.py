@@ -1,7 +1,7 @@
 from utilities import Player
 import utilities
 
-filepath = r"Evan-Dame-MIS-221-PA-4\nba_data_2.csv"
+filepath = r"nba_data_2.csv"
 
 
 #Loads all the information into an array of Player objects
