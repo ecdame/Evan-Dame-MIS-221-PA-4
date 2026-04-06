@@ -1,8 +1,10 @@
 import math
 
+# Represents one NBA player and the stats this program needs.
 class Player:
 
     def __init__(self, name, position, team, games, ppg, rebounds, assists):
+        # Store the raw values loaded from the CSV file.
         self.name = name
         self.position = position
         self.team = team
@@ -11,15 +13,16 @@ class Player:
         self.rebounds = rebounds
         self.assists = assists
 
-        #Calculated fields
+        # Build extra values once so the program can reuse them later.
         self.pra = self.ppg + self.rebounds + self.assists
         self.total_points = math.floor(self.ppg * self.games)
 
 
 def menu(player_list):
-    
+    # Keep showing the menu until the user chooses to quit.
     while True:
 
+        print("\nMain Menu")
         print("\nOptions: " \
         "\nTP: Displays players ranked by total points" \
         "\nPRA: Displays Players Ranked by points per game, assists, and rebound Average" \
@@ -29,8 +32,10 @@ def menu(player_list):
         "\nQuit: Exits the program")
 
         selection = input("\nPlease enter selection: ")
+        # Clean and validate the user's menu choice before using it.
         selection = sel_check(selection)
 
+        # Run the matching feature based on the user's selection.
         match selection:
             case "tp":
                 num_players = input("Please enter the number of players you want to display: ")
@@ -55,7 +60,7 @@ def menu(player_list):
                 break
 
 def sel_check(sel):
-
+    # Repeatedly prompt until the user enters one of the allowed commands.
     while True:
         sel = sel.strip().lower()
 
@@ -65,7 +70,7 @@ def sel_check(sel):
         sel = input("Please make a valid selection: ")
 
 def quant_check(quant, player_list):
-
+    # Make sure the requested number of players is an integer within range.
     while True:
         try: 
             quant = int(quant)
@@ -79,6 +84,7 @@ def quant_check(quant, player_list):
         else: quant = input("Please enter a valid number of players: ")
 
 def top_x_pra_avg(player_list, x):
+    # Sort players from highest PRA to lowest before printing the top results.
     player_list.sort(key=lambda Player: Player.pra, reverse=True)
 
     print(f"\nTop {x} Players by PRA Average:\n")
@@ -87,6 +93,7 @@ def top_x_pra_avg(player_list, x):
         print(f"#{i+1}: {p.name}---{p.pra} pra average")
 
 def top_x_total_points(player_list, x):
+    # Sort players by total points scored, highest first.
     player_list.sort(key=lambda Player: Player.total_points, reverse=True)
     
     print(f"\nTop {x} Players by Total Points Scored:\n")
@@ -95,10 +102,12 @@ def top_x_total_points(player_list, x):
         print(f"#{i+1}: {p.name}---{p.total_points} total points")
 
 def combined_ppg(player_list):
-
+    # Group same-team players together so it is easier to compare teammates.
     player_list.sort(key=lambda Player: Player.team)
 
     print("\nPlayer Duos with Combined PPG >= 50:\n")
+    # Check every unique pair of players and print duos from the same team
+    # whose combined points per game meet the requirement.
     for i in range (len(player_list)):
         for j in range(i+1, len(player_list)):
 
@@ -114,9 +123,10 @@ def combined_ppg(player_list):
                           f"Combined PPG: {total_ppg}")
 
 def player_search(player_list, name):
+    # Normalize the input so capitalization and extra spaces do not matter.
     name = name.lower().strip()
     
-
+    # Look through the list until an exact player name match is found.
     for player in player_list:
         if name == player.name.lower().strip():
             print(f"\n{player.name} Data: ")
@@ -130,16 +140,18 @@ def player_search(player_list, name):
             print(f"PRA Average: {player.pra}")
 
             return
+    # If no match is found, ask again and repeat the search.
     print(f"\nNo player named {name} was found.")
     name = input("Please enter a valid player name: ")
     player_search(player_list, name)
             
 def team_search(player_list, team):
-
+    # Track whether at least one player on the requested team is found.
     team_found = False
     team = team.lower().strip()
 
     print(f"\n{team.upper().strip()} Players: ")
+    # Print every player whose team abbreviation matches the search.
     for player in player_list:
         if team == player.team.lower().strip():
 
@@ -153,6 +165,7 @@ def team_search(player_list, team):
             print(f"Assists Per Game: {player.assists}")
             print(f"PRA Average: {player.pra}")
 
+    # If no team was found, prompt again and rerun the search.
     if team_found == False:
         print(f"\nNo team matching {team.upper().strip()} was found!")
         team = input("Please enter a valid team abbreviation: ")
